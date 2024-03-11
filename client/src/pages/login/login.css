@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.loginContainer {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding-top: 60px; 
+}
+
+.loginContent {
+  display: flex;
+  width: 80%; 
+  max-width: 1200px;
+  margin: 0 auto; 
+}
+
+.loginFormContainer {
+  flex: 1; 
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 5%;
+}
+
+.loginForm {
+  max-width: 400px; 
+}
+
+.loginImage {
+  flex: 1; 
+}
+
+.loginImage img {
+  width: 100%;
+  height: auto; 
+  object-fit: cover; 
+}
+
+
+.loginFormContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginForm {
+  width: 100%;
+  max-width: 400px; 
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.lInput, .lButton {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* Makes sure padding is included in the width */
+}
+
+.lInput {
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+}
+
+.lButton {
+  background-color: #fd0230;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.lButton:hover {
+  background-color: #e6022e;
+}
+
+.lButton:disabled {
+  background-color: #fd02308c;
+  cursor: not-allowed;
+}
+
+.loginError {
+  color: #ff0000;
+  text-align: center;
+}

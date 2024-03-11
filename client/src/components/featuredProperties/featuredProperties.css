@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.fp {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px 5%;
+  background: #f8f9fa;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.fpItem {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.fpItem:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fpImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(80%);
+}
+
+.fpName, .fpCity, .fpPrice {
+  position: absolute;
+  left: 10px;
+  color: white;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.fpName {
+  bottom: 70px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.fpCity {
+  bottom: 45px;
+  font-size: 1rem;
+}
+
+.fpPrice {
+  bottom: 20px;
+  font-size: 1rem;
+}
+
+.fpRating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.ratingButton {
+  background-color: #EEB417;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-right: 10px; 
+}
+
+
+@media (max-width: 1024px) {
+  .fp {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .fp {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .fp {
+    grid-template-columns: 1fr;
+  }
+}

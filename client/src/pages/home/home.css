@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+/* Define CSS variables for consistent styling across the site */
+
+:root {
+  --primary-color: #4f02f6; 
+  --secondary-color: #120136; 
+  --text-color: #333; 
+  --background-color: #f2f2f2; 
+  --font-stack: 'Montserrat', sans-serif;  
+}
+
+/* Style for the home container */
+.homeContainer {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px; 
+  padding: 0 20px; 
+}
+
+/* Style for the home titles */
+.homeTitle {
+  width: 100%; 
+  max-width: 1024px; 
+  font-size: 2rem;
+  color: var(--secondary-color); 
+  margin-bottom: 20px; 
+  text-align: center; 
+  font-family: var(--font-stack); 
+
+
+a, button {
+  color: var(--primary-color);
+  text-decoration: none; 
+  font-weight: 500; 
+}
+
+/* Hover effects for links and buttons for visual feedback */
+a:hover, button:hover {
+  color: var(--secondary-color);
+  text-decoration: underline; 
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .homeContainer {
+    margin-top: 20px; 
+    gap: 20px; 
+  }
+
+  .homeTitle {
+    font-size: 18px; 
+  }
+}
+}

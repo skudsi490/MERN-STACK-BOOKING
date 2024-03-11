@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+/* Base styling */
+.featured {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 20px; 
+  padding: 10px 5%; 
+  background: #f8f9fa; 
+  margin-top: 10px; 
+  font-family: 'Montserrat', sans-serif; 
+}
+
+.featuredt {
+  text-align: center;
+  font-size: 2.5rem; 
+  color: #333; 
+  margin-bottom: 10px; 
+  font-weight: 600; 
+  transition: color 0.3s ease; 
+}
+
+.featuredItem {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px; 
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  cursor: pointer;
+}
+
+.featuredItem:hover {
+  transform: translateY(-10px); 
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2); 
+}
+
+.featuredImg {
+  width: 100%;
+  height: auto; 
+  object-fit: cover; 
+}
+
+.featuredTitles {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff; 
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); 
+}
+
+/* Typography */
+.featuredTitles h1, .featuredTitles h2 {
+  margin: 5px 0; 
+  transition: all 0.3s ease; 
+}
+
+.featuredTitles h1:hover, .featuredTitles h2:hover {
+  color: #ffcc00; 
+  cursor: pointer;
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 1200px) {
+  .featured {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (max-width: 992px) {
+  .featured {
+    grid-template-columns: 1fr; 
+  }
+}
+
+@media (max-width: 768px) {
+  .featured {
+    padding: 30px 3%; 
+  }
+
+  .featuredt {
+    font-size: 2rem; 
+  }
+}

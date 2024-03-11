@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.heroHeader { /* Updated class name for uniqueness */
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  background-image: url('../../assets/Header-background.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  color: white;
+  padding: 50px 0;
+  height: 60vh; 
+  position: relative;
+  width: 100%; 
+}
+
+
+.heroHeaderContainer {
+  max-width: 1200px; 
+  width: 100%; 
+  margin: 0 auto;
+  padding: 0 50px; 
+}
+
+.siImg {
+  width: calc(100% - 32px); 
+  margin: 16px; 
+  height: auto; 
+  max-height: 250px; 
+}
+
+.headerTitle { 
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 1s ease-out both; 
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.headerDesc {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.headerOptions {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 40px;
+}
+
+.headerOptionItem {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.headerOptionItem.active, .headerOptionItem:hover {
+  transform: scale(1.1);
+}
+
+.headerOptionItem > span {
+  margin-top: 0.5rem;
+}
+
+.headerSearch {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.headerSearchItem {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
+  gap: 10px;
+  position: relative; /* Added for absolute positioning of children */
+}
+
+.headerIcon {
+  min-width: 30px;
+  text-align: center;
+}
+
+.headerSearchInput,
+.headerSearchText {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.headerSearchText {
+  cursor: pointer;
+  background-color: #f8f8f8;
+  transition: background-color 0.3s ease;
+}
+
+.headerSearchText:hover {
+  background-color: #e2e2e2;
+}
+
+.date, .options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  width: 100%; /* Ensure dropdowns match the width of the parent */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  background-color: white;
+}
+
+.optionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.optionCounterButton {
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  user-select: none;
+}
+
+.headerBtn {
+  grid-column: span 3; /* Span across all columns */
+  padding: 15px 0;
+  background-color: #fd0230; /* Bright contrast color for the button */
+  border: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.headerBtn:hover {
+  background-color: #b11137;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 30px 0;
+  }
+
+  .headerSearch {
+    grid-template-columns: 1fr;
+  }
+
+  .headerBtn {
+    grid-column: span 1;
+  }
+
+  .heroHeaderContainer {
+    padding: 0 20px; 
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translate3d(0, 40px, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}

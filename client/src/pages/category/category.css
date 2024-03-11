@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.categoryContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px; 
+  font-family: 'Montserrat', sans-serif;
+}
+
+.categoryWrapper {
+  width: 90%; 
+  max-width: 1024px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; 
+}
+
+.categoryContent {
+  background-color: #f8f8f8;
+  padding: 30px; 
+  border-radius: 12px; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); 
+}
+
+.categoryTitle {
+  font-size: 28px; 
+  color: #333; 
+  margin-bottom: 30px; 
+  text-align: center;
+}
+
+.categoryItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+  gap: 30px; 
+}
+
+.categoryItem {
+  border-radius: 12px; 
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s ease-in-out; 
+}
+
+.categoryItem:hover {
+  transform: translateY(-10px); 
+}
+
+.categoryItemImage {
+  width: 100%;
+  height: 250px; 
+  object-fit: cover;
+}
+
+.categoryItemInfo {
+  padding: 20px; 
+  background-color: #fff;
+}
+
+.categoryItemTitle {
+  font-size: 20px; 
+  color: #120136; 
+  margin-bottom: 15px; 
+}
+
+.categoryItemDesc {
+  font-size: 16px; 
+  color: #555; 
+}
+
+.categoryItemPrice {
+  font-size: 18px; 
+  color: #fd0230; 
+  font-weight: bold;
+  margin-top: 15px; 
+}
+
+.cityFilterForm {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0; 
+  gap: 10px; 
+}
+
+.cityFilterForm input {
+  padding: 12px; 
+  border: 2px solid #ccc; 
+  border-radius: 8px; 
+}
+
+.cityFilterForm button {
+  padding: 12px 25px; 
+  background-color: #120136; 
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px; 
+}
+
+.cityFilterForm button:hover {
+  background-color: #0e0a21; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .categoryItems {
+    grid-template-columns: 1fr; 
+  }
+}

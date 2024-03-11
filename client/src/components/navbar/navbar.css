@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.navbar {
+  font-family: 'Montserrat', sans-serif;
+  background: #ffffff;
+  color: #333;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: absolute; 
+  top: 0;
+  z-index: 1000; 
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px; 
+  max-width: 1200px;
+  margin: auto;
+}
+
+.logoImg {
+  height: 50px; 
+  width: auto; 
+  cursor: pointer;
+}
+
+.navItems {
+  display: flex;
+  align-items: center;
+}
+
+.navUser {
+  margin-right: 20px; 
+  font-weight: 600; 
+}
+
+.navItem, .navLogoutButton {
+  font-size: 16px;
+  font-weight: 600; 
+  color: #333;
+  background: none;
+  border: none;
+  margin-left: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  border-radius: 4px; 
+}
+
+.navItem:hover, .navLogoutButton:hover {
+  background-color: #f0f0f0; 
+  color: #fd0230; 
+}
+
+.navLogoutButton {
+  background-color: #ff5555; 
+  color: white; 
+}
+
+.navLogoutButton:hover {
+  background-color: #e6022e; 
+  color: white; 
+}

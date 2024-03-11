@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.mail{
+  width: 100%;
+  margin-top: 50px;
+  background-color: #22162B;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 50px;  
+  font-family: 'Montserrat', sans-serif;
+}
+
+.mailInputContainer>input{
+  width: 300px;
+  height: 30px;
+  padding: 10px;
+  border: none;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.mailInputContainer>button{
+  height: 50px;
+  background-color: #FD0230;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+.mailInputContainer>button:hover {
+  background-color: #B11137;
+}

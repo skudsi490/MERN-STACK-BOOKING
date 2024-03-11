@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.myBookingsPage {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+
+}
+
+.bookingItem {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.bookingImg {
+    width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: cover;
+}
+
+.bookingDetails {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bookingDetails h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.bookingDetails p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+}
+
+.cancelBookingBtn {
+    align-self: start;
+    padding: 10px 20px;
+    background-color: #fd0230;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.cancelBookingBtn:hover {
+    background-color: #d0021b;
+}
+
+@media (min-width: 768px) {
+    .bookingItem {
+        flex-direction: row;
+    }
+
+    .bookingImg {
+        width: 40%;
+    }
+
+    .bookingDetails {
+        padding: 30px;
+    }
+}
