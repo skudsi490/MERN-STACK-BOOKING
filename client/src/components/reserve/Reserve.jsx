@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "./reserve.css";
 import useFetch from "../../hooks/useFetch";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
@@ -14,14 +14,20 @@ const Reserve = ({ setOpen, hotelId }) => {
   const { dates } = useContext(SearchContext);
   const { user } = useContext(AuthContext);
 
+  useEffect(() => {
+    fetchRoomData();
+  }, [hotelId]);
+
   const getDatesInRange = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const date = new Date(start.getTime());
     let dates = [];
-    while (date <= end) {
+    for (
+      let date = new Date(start);
+      date <= end;
+      date.setDate(date.getDate() + 1)
+    ) {
       dates.push(new Date(date).getTime());
-      date.setDate(date.getDate() + 1);
     }
     return dates;
   };
@@ -29,20 +35,26 @@ const Reserve = ({ setOpen, hotelId }) => {
   const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
 
   const isAvailable = (roomNumber) => {
-    return !roomNumber.unavailableDates.some((date) =>
-      alldates.includes(new Date(date).getTime())
+    const roomUnavailableDates = roomNumber.unavailableDates.map((date) =>
+      new Date(date).getTime()
     );
+    return !alldates.some((date) => roomUnavailableDates.includes(date));
   };
 
-  const handleSelect = (e, roomType) => {
+  const handleSelect = (e, roomType, roomNumberId) => {
     const checked = e.target.checked;
-    const roomId = roomType._id; // Get the room type ID
-    const price = roomType.price; // Get the room type price
-  
     if (checked) {
-      setSelectedRooms(prevSelectedRooms => [...prevSelectedRooms, { roomId, price, dates: [dates[0].startDate, dates[0].endDate] }]);
+      setSelectedRooms(prev => [
+        ...prev,
+        {
+          roomNumberId,
+          roomId: roomType._id,
+          price: roomType.price,
+          dates: [dates[0].startDate, dates[0].endDate]
+        }
+      ]);
     } else {
-      setSelectedRooms(prevSelectedRooms => prevSelectedRooms.filter(room => room.roomId !== roomId));
+      setSelectedRooms(prev => prev.filter(room => room.roomNumberId !== roomNumberId));
     }
   };
   
@@ -54,40 +66,59 @@ const Reserve = ({ setOpen, hotelId }) => {
       console.error("User is not authenticated");
       return;
     }
-    
-    const allDatesFilled = selectedRooms.every(room => room.dates && room.dates.length === 2);
-    if (!allDatesFilled) {
-      console.error("Error: Not all selected rooms have start and end dates.");
-      return;
-    }
-    
-    const totalBookingPrice = selectedRooms.reduce((acc, room) => {
-      const nights = getDatesInRange(room.dates[0], room.dates[1]).length;
-      return acc + (room.price * nights);
-    }, 0);
-    
+  
+    const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
+  
     const bookingData = {
       hotelId,
-      rooms: selectedRooms.map(room => ({
-        roomId: room.roomId, // This should be the room type ID
-        dates: getDatesInRange(room.dates[0], room.dates[1]),
+      rooms: selectedRooms.map((room) => ({
+        roomId: room.roomId,
+        roomNumberId: room.roomNumberId, // Assuming roomNumberId is available in room object
+        dates: [dates[0].startDate, dates[0].endDate],
       })),
-      price: totalBookingPrice,
+      price: selectedRooms.reduce(
+        (acc, room) =>
+          acc + room.price * alldates.length,
+        0
+      ),
     };
-    
+  
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("/api/bookings", bookingData, {
+  
+      // Step 1: Post booking data to your API
+      await axios.post("/api/bookings", bookingData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-    
-      console.log(response.data);
-      fetchRoomData(); 
+  
+      // Step 2: Update each room's unavailable dates
+      await Promise.all(selectedRooms.map(async (room) => {
+        const roomUpdateData = {
+          dates: alldates,
+        };
+        await axios.put(`/api/rooms/availability/${room.roomNumberId}`, roomUpdateData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }));
+  
+      // Refetch room data to reflect the new unavailable dates
+      await fetchRoomData();
       setOpen(false);
       navigate("/my-bookings");
-      
-    } catch (err) {
-      console.error("Error creating booking:", err.response ? err.response.data : err);
+    } catch (error) {
+      console.error(
+        "Error creating booking:",
+        error.response ? error.response.data : error
+      );
+    }
+  };
+  
+  // Fetch room data function
+  const fetchRoomData = async () => {
+    try {
+      const response = await axios.get(`/api/hotels/room/${hotelId}`);
+    } catch (error) {
+      console.error("Error fetching room data:", error);
     }
   };
   
@@ -101,34 +132,36 @@ const Reserve = ({ setOpen, hotelId }) => {
           onClick={() => setOpen(false)}
         />
         <span>Select your rooms:</span>
-        {loading ? (
-          <span>Loading...</span>
-        ) : (
-          data.map((item) => (
-            <div className="rItem" key={item._id}>
-              <div className="rItemInfo">
-                <div className="rTitle">{item.title}</div>
-                <div className="rDesc">{item.desc}</div>
-                <div className="rMax">Max people: <b>{item.maxPeople}</b></div>
-                <div className="rPrice">${item.price}</div>
-              </div>
-              <div className="rSelectRooms">
-                {item.roomNumbers.map((roomNumber) => (
-                  <div className="room" key={roomNumber._id}>
-                    <label>{roomNumber.number}</label>
-                    <input
-                      type="checkbox"
-                      value={roomNumber._id}
-                      onChange={(e) => handleSelect(e, item)}
-                      disabled={!isAvailable(roomNumber)}
-                    />
+        {loading
+          ? "Loading..."
+          : data.map((item) => (
+              <div className="rItem" key={item._id}>
+                <div className="rItemInfo">
+                  <div className="rTitle">{item.title}</div>
+                  <div className="rDesc">{item.desc}</div>
+                  <div className="rMax">
+                    Max people: <b>{item.maxPeople}</b>
                   </div>
-                ))}
+                  <div className="rPrice">${item.price}</div>
+                </div>
+                <div className="rSelectRooms">
+                  {item.roomNumbers.map((roomNumber) => (
+                    <div className="room" key={roomNumber._id}>
+                      <label>{roomNumber.number}</label>
+                      <input
+                        type="checkbox"
+                        value={roomNumber._id}
+                        onChange={(e) => handleSelect(e, item, roomNumber._id)}
+                        disabled={!isAvailable(roomNumber)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
-        )}
-        <button onClick={handleClick} className="rButton">Reserve Now!</button>
+            ))}
+        <button onClick={handleClick} className="rButton">
+          Reserve Now!
+        </button>
       </div>
     </div>
   );

@@ -62,9 +62,7 @@ const useFetchBookings = (userId) => {
       setError(error.response ? error.response.data : error.message);
     }
   };
-
-  console.log("Fetched bookings:", bookings);
-
+  
   return { bookings, loading, error, cancelBooking };
 };
 
