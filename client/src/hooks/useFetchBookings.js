@@ -63,8 +63,6 @@ const useFetchBookings = (userId) => {
     }
   };
 
-  console.log("Fetched bookings:", bookings);
-
   return { bookings, loading, error, cancelBooking };
 };
 

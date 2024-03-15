@@ -23,7 +23,7 @@ const SearchItem = ({ item }) => {
         <span className="siDistance">{item.distance}m from center</span>
         <span className="siTaxiOp">Free airport taxi</span>
         <span className="siSubtitle">
-          Studio Apartment with Air conditioning
+          Standard Room , city view, free Wi-Fi
         </span>
         <span className="siFeatures">{item.desc}</span>
         <span className="siCancelOp">Free cancellation </span>

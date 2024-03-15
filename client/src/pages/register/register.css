@@ -5,7 +5,6 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f2f5;
 }
 
 .rContainer {
@@ -29,11 +28,19 @@
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  box-sizing: border-box; 
+  
 }
 
 .rForm input {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  font-size: 16px;
   border: 1px solid #ccc;
+  box-sizing: border-box; 
+  
 }
 
 .rForm button {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/navbar/Navbar"; 
 import "./register.css";
 
 const Register = () => {
@@ -31,6 +32,8 @@ const Register = () => {
   };
 
   return (
+    <div>
+      <Navbar />
     <div className="register">
       <div className="rContainer">
         <h1 className="rTitle">Create an Account</h1>
@@ -75,6 +78,7 @@ const Register = () => {
         </form>
         {error && <span className="rError">Something went wrong!</span>}
       </div>
+    </div>
     </div>
   );
 };

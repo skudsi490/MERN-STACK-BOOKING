@@ -13,6 +13,7 @@ const Reserve = ({ setOpen, hotelId }) => {
   const { data, loading } = useFetch(`/api/hotels/room/${hotelId}`);
   const { dates } = useContext(SearchContext);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); 
 
   const getDatesInRange = (startDate, endDate) => {
     const start = new Date(startDate);
@@ -36,16 +37,24 @@ const Reserve = ({ setOpen, hotelId }) => {
     );
   };
 
-  const handleSelect = (e) => {
-    const { checked, value } = e.target;
-    setSelectedRooms(
+  const handleSelect = (e, roomId, roomNumberId) => {
+    const { checked } = e.target;
+    // Find the room object in the `data` array that matches the `roomId`
+    const roomType = data.find((room) => room._id === roomId);
+    if (!roomType) {
+      console.error("Selected room not found in data for id:", roomId);
+      return;
+    }
+
+    setSelectedRooms((prevSelectedRooms) =>
       checked
-        ? [...selectedRooms, value]
-        : selectedRooms.filter((item) => item !== value)
+        ? [
+            ...prevSelectedRooms,
+            { roomId, roomNumberId, price: roomType.price },
+          ]
+        : prevSelectedRooms.filter((room) => room.roomNumberId !== roomNumberId)
     );
   };
-
-  const navigate = useNavigate();
 
   const handleClick = async () => {
     if (!user) {
@@ -53,42 +62,47 @@ const Reserve = ({ setOpen, hotelId }) => {
       return;
     }
 
+    if (selectedRooms.length === 0) {
+      alert("Please select at least one room to reserve.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
 
-      // Step 1: Update room availability
+      // Update the availability of each room before making the booking.
       await Promise.all(
-        selectedRooms.map((roomId) => {
-          return axios.put(
-            `/api/rooms/availability/${roomId}`,
-            {
-              dates: alldates,
-            },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-        })
+        selectedRooms.map((selectedRoom) =>
+          axios.put(
+            `/api/rooms/availability/${selectedRoom.roomNumberId}`,
+            { dates: alldates },
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+        )
       );
 
-      // Step 2: Create a booking
+      // Create the booking with the correct details.
       const bookingDetails = {
         hotelId,
         userId: user.id,
-        rooms: selectedRooms.map((roomId) => ({
-          room: roomId,
+        rooms: selectedRooms.map((selectedRoom) => ({
+          roomId: selectedRoom.roomId,
+          roomNumberId: selectedRoom.roomNumberId,
+          price: selectedRoom.price,
           dates: alldates,
         })),
       };
 
-      await axios.post("/api/bookings", bookingDetails, {
+      const response = await axios.post("/api/bookings", bookingDetails, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setOpen(false);
-      navigate("/my-bookings");
+      if (response.data) {
+        setOpen(false);
+        navigate("/my-bookings");
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Error creating booking:", err);
     }
   };
 
@@ -120,8 +134,10 @@ const Reserve = ({ setOpen, hotelId }) => {
                     <label>{roomNumber.number}</label>
                     <input
                       type="checkbox"
-                      value={roomNumber._id}
-                      onChange={handleSelect}
+                      value={item._id} 
+                      onChange={(e) =>
+                        handleSelect(e, item._id, roomNumber._id)
+                      }
                       disabled={!isAvailable(roomNumber)}
                     />
                   </div>

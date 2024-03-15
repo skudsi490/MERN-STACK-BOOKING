@@ -67,7 +67,7 @@ body, html {
   border-radius: 5px;
   font-size: 16px;
   border: 1px solid #ccc;
-  box-sizing: border-box; /* Makes sure padding is included in the width */
+  box-sizing: border-box; 
 }
 
 .lInput {

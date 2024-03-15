@@ -1,30 +1,54 @@
 import Booking from "../models/Booking.js";
+import Room from "../models/Room.js";
+import mongoose from "mongoose";
 
 export const createBooking = async (req, res, next) => {
   const { hotelId, rooms } = req.body;
 
-  const newBooking = new Booking({
-    user: req.user.id,
-    hotel: hotelId,
-    rooms: rooms.map((room) => ({
-      room: room.roomId,
-      dates: room.dates,
-    })),
-  });
-
   try {
+    const newBooking = new Booking({
+      user: req.user.id,
+      hotel: hotelId,
+      rooms: rooms.map((room) => ({
+        room: mongoose.Types.ObjectId(room.roomId),
+        roomNumber: mongoose.Types.ObjectId(room.roomNumberId),
+        dates: room.dates,
+        price: room.price,
+      })),
+    });
+
+    // Save the new booking
     const savedBooking = await newBooking.save();
     res.status(201).json(savedBooking);
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: "Internal server error", error: err });
   }
 };
 
 export const getBookingsByUser = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ user: req.user.id }).populate(
+    let bookings = await Booking.find({ user: req.user.id }).populate(
       "hotel",
       "name photos"
+    );
+
+    bookings = await Promise.all(
+      bookings.map(async (booking) => {
+        const roomDetails = await Promise.all(
+          booking.rooms.map(async ({ room, dates }) => {
+            const roomData = await Room.findById(room);
+            console.log("Room data:", roomData);
+            return {
+              room: roomData,
+              dates,
+            };
+          })
+        );
+        return {
+          ...booking._doc,
+          rooms: roomDetails,
+        };
+      })
     );
     res.json(bookings);
   } catch (err) {
@@ -40,5 +64,29 @@ export const deleteBooking = async (req, res, next) => {
     res.status(200).json({ message: "Booking cancelled successfully" });
   } catch (err) {
     next(err);
+  }
+};
+
+export const makeRoomAvailable = async (req, res, next) => {
+  const { roomNumberId } = req.params;
+  const { dates } = req.body;
+
+  try {
+    // Find the room by room number ID
+    const room = await Room.findById(roomNumberId);
+
+    // Filter out the dates that are being made available again
+    const updatedUnavailableDates = room.unavailableDates.filter(
+      (date) => !dates.includes(date)
+    );
+
+    // Update the room with the new unavailableDates array
+    room.unavailableDates = updatedUnavailableDates;
+    await room.save();
+
+    res.status(200).json({ message: "Room availability updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error", error: err });
   }
 };
