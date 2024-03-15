@@ -35,12 +35,15 @@ const Reserve = ({ setOpen, hotelId }) => {
   };
 
   const handleSelect = (e, roomType) => {
-    const { checked, value } = e.target; // value should be the room type ID, not the room number ID
-    setSelectedRooms(
-      checked
-        ? [...selectedRooms, { roomId: roomType._id, price: roomType.price, dates: [dates[0].startDate, dates[0].endDate] }]
-        : selectedRooms.filter((selectedRoom) => selectedRoom.roomId !== roomType._id)
-    );
+    const checked = e.target.checked;
+    const roomId = roomType._id; // Get the room type ID
+    const price = roomType.price; // Get the room type price
+  
+    if (checked) {
+      setSelectedRooms(prevSelectedRooms => [...prevSelectedRooms, { roomId, price, dates: [dates[0].startDate, dates[0].endDate] }]);
+    } else {
+      setSelectedRooms(prevSelectedRooms => prevSelectedRooms.filter(room => room.roomId !== roomId));
+    }
   };
   
 
@@ -79,8 +82,10 @@ const Reserve = ({ setOpen, hotelId }) => {
       });
     
       console.log(response.data);
+      fetchRoomData(); 
       setOpen(false);
       navigate("/my-bookings");
+      
     } catch (err) {
       console.error("Error creating booking:", err.response ? err.response.data : err);
     }

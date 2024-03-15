@@ -30,21 +30,25 @@ const MyBookings = () => {
             <div className="bookingDetails">
               <h2>{booking.hotel?.name || "Hotel name not available"}</h2>
               {/* Display booking dates for each room */}
-              {booking.rooms.map((room, index) => (
-                <p key={index}>
-                  Room {index + 1}:{" "}
-                  {new Date(room.dates[0]).toLocaleDateString()} -{" "}
-                  {new Date(
-                    room.dates[room.dates.length - 1]
-                  ).toLocaleDateString()}
-                </p>
-              ))}
+              <p>Number of rooms: {booking.rooms.length}</p>{" "}
+              {/* Number of rooms */}
+              {booking.rooms.map((room, index) => {
+                const checkIn = new Date(room.dates[0]);
+                const checkOut = new Date(room.dates[room.dates.length - 1]);
+                const nights = (checkOut - checkIn) / (1000 * 3600 * 24);
+
+                return (
+                  <p key={index}>
+                    {nights} night(s): {checkIn.toLocaleDateString()} -{" "}
+                    {checkOut.toLocaleDateString()}
+                  </p>
+                );
+              })}
               {/* Display the total price */}
               <p className="bookingPrice">
                 Total Price: $
                 {booking.price ? booking.price.toFixed(2) : "Not available"}
               </p>
-
               <button
                 onClick={() => cancelBooking(booking._id)}
                 className="cancelBookingBtn"
