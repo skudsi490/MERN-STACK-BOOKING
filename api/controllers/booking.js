@@ -1,6 +1,6 @@
 import Booking from "../models/Booking.js";
-import Room from "../models/Room.js";
-import mongoose from "mongoose";
+import Room from "../models/Room.js"; 
+import mongoose from 'mongoose';
 
 export const createBooking = async (req, res, next) => {
   const { hotelId, rooms } = req.body;
@@ -9,7 +9,7 @@ export const createBooking = async (req, res, next) => {
     const newBooking = new Booking({
       user: req.user.id,
       hotel: hotelId,
-      rooms: rooms.map((room) => ({
+      rooms: rooms.map(room => ({
         room: mongoose.Types.ObjectId(room.roomId),
         roomNumber: mongoose.Types.ObjectId(room.roomNumberId),
         dates: room.dates,
@@ -25,21 +25,20 @@ export const createBooking = async (req, res, next) => {
   }
 };
 
+
 export const getBookingsByUser = async (req, res, next) => {
   try {
-    let bookings = await Booking.find({ user: req.user.id }).populate(
-      "hotel",
-      "name photos"
-    );
+    let bookings = await Booking.find({ user: req.user.id })
+      .populate("hotel", "name photos");
 
     bookings = await Promise.all(
       bookings.map(async (booking) => {
         const roomDetails = await Promise.all(
           booking.rooms.map(async ({ room, dates }) => {
-            const roomData = await Room.findById(room);
-            console.log("Room data:", roomData);
+            const roomData = await Room.findById(room); 
+            console.log('Room data:', roomData); 
             return {
-              room: roomData,
+              room: roomData, 
               dates,
             };
           })
@@ -57,6 +56,8 @@ export const getBookingsByUser = async (req, res, next) => {
   }
 };
 
+
+
 export const deleteBooking = async (req, res, next) => {
   try {
     const bookingId = req.params.id;
@@ -64,29 +65,5 @@ export const deleteBooking = async (req, res, next) => {
     res.status(200).json({ message: "Booking cancelled successfully" });
   } catch (err) {
     next(err);
-  }
-};
-
-export const makeRoomAvailable = async (req, res, next) => {
-  const { roomNumberId } = req.params;
-  const { dates } = req.body;
-
-  try {
-    // Find the room by room number ID
-    const room = await Room.findById(roomNumberId);
-
-    // Filter out the dates that are being made available again
-    const updatedUnavailableDates = room.unavailableDates.filter(
-      (date) => !dates.includes(date)
-    );
-
-    // Update the room with the new unavailableDates array
-    room.unavailableDates = updatedUnavailableDates;
-    await room.save();
-
-    res.status(200).json({ message: "Room availability updated successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal server error", error: err });
   }
 };
