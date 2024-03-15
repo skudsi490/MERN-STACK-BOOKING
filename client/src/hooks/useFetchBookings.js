@@ -58,11 +58,10 @@ const useFetchBookings = (userId) => {
         "Error cancelling booking:",
         error.response ? error.response.data : error.message
       );
-      // Optionally update the error state to reflect this error in the UI
       setError(error.response ? error.response.data : error.message);
     }
   };
-  
+
   return { bookings, loading, error, cancelBooking };
 };
 

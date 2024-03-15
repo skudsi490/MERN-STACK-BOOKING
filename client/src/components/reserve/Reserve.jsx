@@ -67,18 +67,23 @@ const Reserve = ({ setOpen, hotelId }) => {
       return;
     }
   
-    const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
+    // Ensure startDate and endDate are correctly derived from your dates state
+    const startDate = dates[0].startDate;
+    const endDate = dates[0].endDate;
   
+    // Generate all dates between startDate and endDate
+    const allDates = getDatesInRange(startDate, endDate);
+  
+    // Construct the booking data
     const bookingData = {
       hotelId,
-      rooms: selectedRooms.map((room) => ({
+      rooms: selectedRooms.map(room => ({
         roomId: room.roomId,
-        roomNumberId: room.roomNumberId, // Assuming roomNumberId is available in room object
-        dates: [dates[0].startDate, dates[0].endDate],
+        roomNumberId: room.roomNumberId, // Assuming you have roomNumberId in your room object
+        dates: [startDate, endDate], // Ensure these dates are in a format your backend expects
       })),
       price: selectedRooms.reduce(
-        (acc, room) =>
-          acc + room.price * alldates.length,
+        (acc, room) => acc + room.price * allDates.length,
         0
       ),
     };
@@ -86,32 +91,28 @@ const Reserve = ({ setOpen, hotelId }) => {
     try {
       const token = localStorage.getItem("token");
   
-      // Step 1: Post booking data to your API
+      // Post the booking data
       await axios.post("/api/bookings", bookingData, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      // Step 2: Update each room's unavailable dates
-      await Promise.all(selectedRooms.map(async (room) => {
-        const roomUpdateData = {
-          dates: alldates,
-        };
+      // Update each room's unavailable dates
+      await Promise.all(selectedRooms.map(async room => {
+        const roomUpdateData = { dates: allDates };
         await axios.put(`/api/rooms/availability/${room.roomNumberId}`, roomUpdateData, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }));
   
-      // Refetch room data to reflect the new unavailable dates
+      // Refetch room data to reflect the updates
       await fetchRoomData();
       setOpen(false);
       navigate("/my-bookings");
     } catch (error) {
-      console.error(
-        "Error creating booking:",
-        error.response ? error.response.data : error
-      );
+      console.error("Error creating booking:", error.response ? error.response.data : error);
     }
   };
+  
   
   // Fetch room data function
   const fetchRoomData = async () => {
