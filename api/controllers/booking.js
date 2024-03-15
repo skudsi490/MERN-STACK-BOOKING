@@ -14,10 +14,9 @@ export const createBooking = async (req, res, next) => {
         return res.status(404).json({ message: `Room with ID ${room.roomId} not found` });
       }
 
-      // Define startDate and endDate within the loop to ensure they're accessible
       const startDate = new Date(room.dates[0]);
       const endDate = new Date(room.dates[1]);
-      const days = (endDate - startDate) / (1000 * 3600 * 24) + 1; // +1 to include the end date
+      const days = (endDate - startDate) / (1000 * 3600 * 24) + 1;
       totalPrice += days * roomDetails.price;
 
       const datesToUpdate = [];
@@ -28,7 +27,7 @@ export const createBooking = async (req, res, next) => {
       roomUpdates.push({
         roomId: room.roomId,
         roomNumberId: room.roomNumberId,
-        datesToUpdate
+        datesToUpdate // Pass this to update the room availability
       });
     }
 
@@ -39,13 +38,15 @@ export const createBooking = async (req, res, next) => {
       );
     }));
 
+    // Note: You cannot directly use startDate and endDate here as they were defined within the loop
+    // If you need them here, you must ensure they are defined in a scope accessible to this part of the code
     const newBooking = new Booking({
       user: req.user.id,
       hotel: hotelId,
       rooms: rooms.map(room => ({
         room: room.roomId,
         roomNumber: room.roomNumberId,
-        dates: [startDate, endDate],
+        dates: room.dates, // This should be the array [startDate, endDate] from the client
       })),
       price: totalPrice,
     });
@@ -54,9 +55,10 @@ export const createBooking = async (req, res, next) => {
     res.status(201).json(savedBooking);
   } catch (err) {
     console.error("Error in createBooking:", err);
-    next(err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
+
 
 
 
