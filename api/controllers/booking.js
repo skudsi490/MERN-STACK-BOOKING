@@ -6,52 +6,61 @@ export const createBooking = async (req, res, next) => {
 
   try {
     let totalPrice = 0;
+    const roomUpdates = [];
 
-    // Booking validation and price calculation
-    const roomUpdates = []; // Hold room updates to mark unavailable dates
     for (const room of rooms) {
       const roomDetails = await Room.findById(room.roomId);
       if (!roomDetails) {
-        return res.status(404).json({
-          message: `Room with ID ${room.roomId} not found` });
-        }
-        const days = (new Date(room.dates[1]) - new Date(room.dates[0])) / (1000 * 3600 * 24) + 1;
-        totalPrice += days * roomDetails.price;
-  
-        // Add the booking dates to the room's unavailableDates
-        const datesToUpdate = room.dates.map(date => new Date(date));
-        roomUpdates.push({ _id: room.roomId, dates: datesToUpdate });
+        return res.status(404).json({ message: `Room with ID ${room.roomId} not found` });
       }
-  
-      // Update the availability of the rooms
-      await Promise.all(
-        roomUpdates.map(async (roomUpdate) => {
-          await Room.findByIdAndUpdate(
-            roomUpdate._id,
-            { $push: { unavailableDates: { $each: roomUpdate.dates } } },
-            { new: true }
-          );
-        })
-      );
-  
-      // Proceed to create booking if all room IDs are valid
-      const newBooking = new Booking({
-        user: req.user.id,
-        hotel: hotelId,
-        rooms: rooms.map(room => ({
-          room: room.roomId,
-          dates: room.dates,
-        })),
-        price: totalPrice,
+
+      // Assuming that room.dates is an array with two elements: [startDate, endDate]
+      const startDate = new Date(room.dates[0]);
+      const endDate = new Date(room.dates[1]);
+      const days = (endDate - startDate) / (1000 * 3600 * 24) + 1; // +1 to include the end date
+      totalPrice += days * roomDetails.price;
+
+      // Generate all dates in range
+      const datesToUpdate = [];
+      for (let day = startDate; day <= endDate; day.setDate(day.getDate() + 1)) {
+        datesToUpdate.push(new Date(day));
+      }
+
+      roomUpdates.push({
+        roomId: room.roomId,
+        roomNumberId: room.roomNumberId, // Ensure this ID is correctly passed from the client
+        datesToUpdate
       });
-  
-      const savedBooking = await newBooking.save();
-      res.status(201).json(savedBooking);
-    } catch (err) {
-      next(err);
     }
-  };
-  
+
+    // Update room availability
+    await Promise.all(roomUpdates.map(async ({ roomId, roomNumberId, datesToUpdate }) => {
+      await Room.updateOne(
+        { "_id": roomId, "roomNumbers._id": roomNumberId },
+        { $push: { "roomNumbers.$.unavailableDates": { $each: datesToUpdate } } }
+      );
+    }));
+
+    // Create booking after successful room update
+    const newBooking = new Booking({
+      user: req.user.id,
+      hotel: hotelId,
+      rooms: rooms.map(room => ({
+        room: room.roomId,
+        roomNumber: room.roomNumberId, // Make sure this corresponds to the correct subdocument
+        dates: [startDate, endDate],
+      })),
+      price: totalPrice,
+    });
+
+    const savedBooking = await newBooking.save();
+    res.status(201).json(savedBooking);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 
 export const getBookingsByUser = async (req, res, next) => {
   try {
