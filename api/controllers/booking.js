@@ -1,62 +1,54 @@
 import Booking from "../models/Booking.js";
 import Room from "../models/Room.js"; 
-import mongoose from 'mongoose';
 
 export const createBooking = async (req, res, next) => {
   const { hotelId, rooms } = req.body;
 
   try {
+    let totalPrice = 0;
+
+    // Validate room IDs
+    for (const room of rooms) {
+      const roomDetails = await Room.findById(room.roomId);
+      if (!roomDetails) {
+        return res.status(404).json({ message: `Room with ID ${room.roomId} not found` });
+      }
+      const days = (new Date(room.dates[1]) - new Date(room.dates[0])) / (1000 * 3600 * 24);
+      totalPrice += days * roomDetails.price;
+    }
+
+    // Proceed to create booking if all room IDs are valid
     const newBooking = new Booking({
       user: req.user.id,
       hotel: hotelId,
       rooms: rooms.map(room => ({
-        room: mongoose.Types.ObjectId(room.roomId),
-        roomNumber: mongoose.Types.ObjectId(room.roomNumberId),
+        room: room.roomId,
         dates: room.dates,
-        price: room.price,
       })),
+      price: totalPrice,
     });
 
-    // Save the new booking
     const savedBooking = await newBooking.save();
     res.status(201).json(savedBooking);
   } catch (err) {
-    res.status(500).json({ message: "Internal server error", error: err });
+    next(err);
   }
 };
 
-
 export const getBookingsByUser = async (req, res, next) => {
   try {
-    let bookings = await Booking.find({ user: req.user.id })
-      .populate("hotel", "name photos");
-
-    bookings = await Promise.all(
-      bookings.map(async (booking) => {
-        const roomDetails = await Promise.all(
-          booking.rooms.map(async ({ room, dates }) => {
-            const roomData = await Room.findById(room); 
-            console.log('Room data:', roomData); 
-            return {
-              room: roomData, 
-              dates,
-            };
-          })
-        );
-        return {
-          ...booking._doc,
-          rooms: roomDetails,
-        };
-      })
-    );
+    const bookings = await Booking.find({ user: req.user.id })
+      .populate("hotel", "name photos")
+      .populate({
+        path: "rooms.room",
+        select: "title price maxPeople desc"
+      });
     res.json(bookings);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 export const deleteBooking = async (req, res, next) => {
   try {
