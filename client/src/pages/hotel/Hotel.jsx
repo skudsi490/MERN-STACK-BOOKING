@@ -141,7 +141,7 @@ const Hotel = () => {
                         data.address
                       }, just ${
                         data.distance
-                      } from Madrid's city center. This prime location offers convenient access to the heart of the city.`
+                      } of ${data.city} . This prime location offers convenient access to the heart of the city.`
                     : "Loading hotel information..."}
                 </span>
                 <h2>

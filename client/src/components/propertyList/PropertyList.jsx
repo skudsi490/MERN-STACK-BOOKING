@@ -12,7 +12,7 @@ const PropertyList = () => {
     if (type === "apartments") singularType = "apartment";
     else if (type === "villas") singularType = "villa";
     else if (type === "cabins") singularType = "cabin";
-
+    else if (type === "resorts") singularType = "resort";
     // Use singularType for navigation
     navigate(`/properties?type=${singularType}`);
   };

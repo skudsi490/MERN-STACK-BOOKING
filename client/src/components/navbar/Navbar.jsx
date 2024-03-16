@@ -24,7 +24,7 @@ const Navbar = () => {
             <>
               <span className="navUser">Hello, {user.username}</span>
               <Link to="/my-bookings" className="navItem">
-                My Booking
+                My Bookings
               </Link>
               <button onClick={handleLogout} className="navLogoutButton">
                 Logout
